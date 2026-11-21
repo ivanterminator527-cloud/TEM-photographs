@@ -1,0 +1,122 @@
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <vector>
+#include <functional>
+#include <cmath>
+#include <tuple>
+#include <numeric>
+#include <algorithm>
+
+std::vector<std::vector<std::vector<float>>> statistic (std::vector<std::vector<float>> intersection, std::vector<std::vector<int>> indices){
+    int l =5000; int n=500; bool check=false; float x, y, r;
+    std::vector<std::vector<float>> coord(l, std::vector<float>(4, -100.0f)); //4 число - число, сколько вошло в это пересечение точек
+    std::vector<std::vector<int>> ind_of_ind(l, std::vector<float>(n+1, 0));
+    //ДОДЕЛАТЬ!!!!!!!!!!
+    int cur = 0;
+    if (intersection.size()>=1){
+    for (int i=0; i<3; i++){
+        coord[0][i] = intersection[0][i];
+    }
+    coord[0][3]=1.0f;
+    cur++;
+    for (size_t i = 1; i<intersection.size(); i+=int(intersection.size()/l)){
+        x = intersection[i][0];
+        y = intersection[i][1];
+        r = intersection[i][2];
+        check = false;
+        for (int j=0; j<cur ; j++){
+            if (std::sqrt(std::pow(x-coord[j][0], 2)+std::pow(y-coord[j][1], 2))<(r+coord[j][2])/4){
+                check = true;
+                for (int k=0; k<3; k++){
+                    coord[j][k] = (intersection[i][k]/20+coord[j][k]*19/20);
+                }
+                if (ind_of_ind[j][n]<=501-2){
+                    ind_of_ind[j][ind_of_ind[n]]=indices[i][0];
+                    ind_of_ind[j][ind_of_ind[n]+1]=indices[i][1];
+                }
+                ind_of_of[j][n]+=2;
+                coord[j][3]++;
+            }
+        }
+        if (!(check) and cur<l-1){
+            for (int k=0; k<3; k++){
+                coord[cur][k] = intersection[i][k];
+            }
+            coord[cur][3]=1.0f;
+            cur++;
+        }
+    }
+    }
+    std::vector<std::vector<float>> newcoord(coord.begin(), coord.begin()+cur);
+    std::vector<std::vector<float>> newind_of(ind_of_ind.begin(), ind_of_ind.begin()+cur);
+    std::vector<std::vector<std::vector<float>>> AB = {newcoord, newind_of};
+    return newcoord;
+}
+
+std::vector<std::vector<float>> sort_stat (std::vector<std::vector<float>> stat, std::vector<std::vector<int>> indices){
+    std::vector<std::vector<float>> sort(stat.size(), std::vector<float>(4, -100.0f)); // из 4 элементов, где 4 - количество пересечений, которые вошло в это число
+    int n=500*2;
+    std::vector<std::vector<int>> indices_all(stat.size(), std::vector<float>(n+1, 0));
+
+    std::vector<int> place(stat.size(), -1);
+    int now=-1;
+    float x, y, r;
+    size_t curr=0;
+
+
+    while (curr<stat.size()){
+        if (place[curr]==-1){
+            now++;
+            for (int i=0; i<3; i++){
+                sort[now][i] = stat[curr][i];
+            }
+            sort[now][3] = stat[curr][3];
+
+
+            for (size_t i=curr+1; i<stat.size(); i++){
+                x = stat[i][0];
+                y = stat[i][1];
+                r = stat[i][2];
+                if (std::sqrt(std::pow(x-sort[now][0], 2)+std::pow(y-sort[now][1], 2))<(r+sort[now][2])/2*0.8f+2.0f){
+                    place[i]=now;
+                    for (int k=0; k<3; k++){
+                        sort[now][k] = (stat[i][k]*stat[i][3]+sort[now][k]*sort[now][3])/(stat[i][3]+sort[now][3]);
+                    }
+                    if (indices_all[now][n]<n-2){
+                        for (int k=indices_all[now][n]; k<n-1 && k-indices_all[now][n]+1<indices[i][n]; k++){
+                            indices_all[now][k] = indices[k-indices_all[now][n]];
+                        }
+                        indices_all[now][n]+= indices[i][n];
+                    }
+                    sort[now][3]+=stat[i][3];
+
+                    
+                }
+            }
+        }
+        curr++;
+
+    }
+    '''
+    std::vector<std::vector<float>> newcoord(stat.size(), std::vector<float>(4, 0.0f));
+    //std::vector<std::vector<float>> newindices(stat.size(), std::vector<float>(4, 0.0f));
+    now = 0;
+    for (size_t i=0; i<stat.size(); i++){
+        if (sort[i][3]>20){
+            for (size_t j=0; j<4; j++){
+                newcoord[now][j]=sort[i][j];
+            }
+            now++;
+        }
+    }
+    '''
+    std::vector<std::vector<float>> newnewcoord(sort.begin(), sort.begin()+now+1);
+    std::vector<std::vector<float>> newnewindices(indices_all.begin(), indices_all.begin()+now+1);
+    std::vector<std::vector<std::vector<float>>> AB = {newnewcoord, newnewindices};
+    return AB;
+}
+
+PYBIND11_MODULE(sets_of_point, m){
+    m.def("statistick", &statistic, "int from sets");
+    m.def("sort_dat", &sort_stat, "stat from statictick");
+}
