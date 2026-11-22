@@ -21,9 +21,9 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> cross_
     int l =1;
     float x, y, R1, R2, R;
 
-    std::vector<std::vector<float>> coord(1500000, std::vector<float>(3, 0.0f));
+    std::vector<std::vector<float>> coord(10000000, std::vector<float>(3, 0.0f));
     std::vector<std::vector<int>> indices(coord.size(),std::vector<int>(2, -1));
-    int n = k.size(); int m = int(std::sqrt(n*n/2/coord.size()))+1;
+    int n = k.size(); int m = std::max(1, int(std::sqrt(n*n/2/coord.size())))+1;
 
 
     for (int i=0; i < n; i+=m){
@@ -38,11 +38,12 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> cross_
                 R1=R2;
                 R2=R;
             }
-            R = R1/5 + R2*4/5;
+            R = R1*2/5 + R2*3/5;
 
 
             if (check(places[i][1], places[i][0], grad[i][1], grad[i][0], x, y) and 
-            check(places[j][1], places[j][0], grad[j][1], grad[j][0], x, y) and R1/(R2+5.0f)<1.2){
+            check(places[j][1], places[j][0], grad[j][1], grad[j][0], x, y) and R1/(R2+5.0f)<1.25 and
+            std::abs(std::atan2(grad[j][1], grad[j][0])-std::atan2(grad[i][1], grad[i][0]))>3.1417*15.0/180){
                 coord[l-1][0] = x;
                 coord[l-1][1] = y;
                 coord[l-1][2] = R;

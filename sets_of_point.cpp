@@ -9,7 +9,7 @@
 
 std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> statistic (
     std::vector<std::vector<float>> intersection, std::vector<std::vector<int>> indices){
-    int l =2000; int n=400; bool check=false; float x, y, r;
+    int l =5000; int n=400; bool check=false; float x, y, r;
     std::vector<std::vector<float>> coord(l, std::vector<float>(4, -100.0f)); //4 число - число, сколько вошло в это пересечение точек
     std::vector<std::vector<int>> ind_of_ind(l, std::vector<int>(n+1, 0));
     int cur = 0;
@@ -25,7 +25,8 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> statis
         r = intersection[i][2];
         check = false;
         for (int j=0; j<cur ; j++){
-            if (std::sqrt(std::pow(x-coord[j][0], 2)+std::pow(y-coord[j][1], 2))<(r+coord[j][2])/4){
+            if (std::sqrt(std::pow(x-coord[j][0], 2)+std::pow(y-coord[j][1], 2))<(r+coord[j][2])*2/5+5.0f and 
+            std::max(r, coord[j][2])/std::min(r, coord[j][2])<1.25){
                 check = true;
                 for (int k=0; k<3; k++){
                     coord[j][k] = (intersection[i][k]/20+coord[j][k]*19/20);
@@ -56,7 +57,7 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> statis
 
 std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>  sort_stat (
     std::vector<std::vector<float>> stat, std::vector<std::vector<int>> indices){
-    std::vector<std::vector<float>> sort(500, std::vector<float>(4, -100.0f)); // из 4 элементов, где 4 - количество пересечений, которые вошло в это число
+    std::vector<std::vector<float>> sort(1000, std::vector<float>(4, -100.0f)); // из 4 элементов, где 4 - количество пересечений, которые вошло в это число
     int n=400*2; int src_count, dst_count;
     std::vector<std::vector<int>> indices_all(sort.size(), std::vector<int>(n+1, 0));
 

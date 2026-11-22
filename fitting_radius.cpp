@@ -15,18 +15,13 @@ std::vector<std::vector<int>> indices, std::vector<std::vector<int>> place){
     int n;
         
     for (size_t i=0; i<sort.size(); i++){ 
-        //Make centers
         n = std::min(indices[i].back(), int(indices[i].size()-1));
         n = std::max(1, n);
-        if (n>10){
-        for (size_t j=0; j<n; j++){
-            centers[0][i] += place[indices[i][j]][1];
-            centers[1][i] += place[indices[i][j]][0];
-        }
-        centers[0][i] /= n;
-        centers[1][i] /= n;
+        if (n>=2){
+        centers[0][i] = sort[i][0];
+        centers[1][i] = sort[i][1];
 
-        //Make radius from that
+        //Make radius from place + centers
         for (size_t j=0; j<n; j++){
             radius[i]+= std::sqrt(std::pow(centers[0][i]-place[indices[i][j]][1], 2)+
             std::pow(centers[1][i]-place[indices[i][j]][0], 2));
