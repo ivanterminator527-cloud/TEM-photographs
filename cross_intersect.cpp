@@ -16,17 +16,18 @@ static bool check(int xi, int yi, float gradx, float grady, float x, float y){
     }
 }
 
-std::vector<std::vector<std::vector<float>>> cross_instersect( std::vector<float> k, std::vector<float> b, 
+std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> cross_instersect( std::vector<float> k, std::vector<float> b, 
     std::vector<std::vector<int>> places, std::vector<std::vector<float>> grad){
-    int n = k.size(); int k = int(std::sqrt(n*n/2/coord.size()))+1;
     int l =1;
     float x, y, R1, R2, R;
 
-    std::vector<std::vector<float>> coord(1000000, std::vector<float>(3, 0.0f));
+    std::vector<std::vector<float>> coord(1500000, std::vector<float>(3, 0.0f));
     std::vector<std::vector<int>> indices(coord.size(),std::vector<int>(2, -1));
+    int n = k.size(); int m = int(std::sqrt(n*n/2/coord.size()))+1;
 
-    for (int i=0; i < n; i+=k){
-        for (int j = i+1; j< n; j+=k-1){
+
+    for (int i=0; i < n; i+=m){
+        for (int j = i+1; j< n; j+=m-1){
             if (k[j]!=k[i]){
             x = (b[i]-b[j])/(k[j]-k[i]);
             y = (b[i]*k[j]-k[i]*b[j])/(k[j]-k[i]);
@@ -59,8 +60,8 @@ std::vector<std::vector<std::vector<float>>> cross_instersect( std::vector<float
 
     }
     std::vector<std::vector<float>> newcoord(coord.begin(), coord.begin()+l-1);
-    std::vector<std::vector<float>> newind(indices.begin(), indices.begin()+l-1);
-    std::vector<std::vector<std::vector<float>>> news = {newcoord, newind};
+    std::vector<std::vector<int>> newind(indices.begin(), indices.begin()+l-1);
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> news = {newcoord, newind};
     return news;
 }
 
