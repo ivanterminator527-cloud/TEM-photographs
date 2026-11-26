@@ -19,17 +19,17 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> statis
     }
     coord[0][3]=1.0f;
     cur++;
-    for (size_t i = 1; i<intersection.size(); i+=int(intersection.size()/l)+1){
+    for (size_t i = 1; i<intersection.size(); i+=int(intersection.size()/l)/2+1){
         x = intersection[i][0];
         y = intersection[i][1];
         r = intersection[i][2];
         check = false;
         for (int j=0; j<cur ; j++){
-            if (std::sqrt(std::pow(x-coord[j][0], 2)+std::pow(y-coord[j][1], 2))<(r+coord[j][2])*2/5+5.0f and 
-            std::max(r, coord[j][2])/std::min(r, coord[j][2])<1.25){
+            if (std::sqrt(std::pow(x-coord[j][0], 2)+std::pow(y-coord[j][1], 2))<(r+coord[j][2])*0.3+10.0f and 
+            std::max(r, coord[j][2])/(std::min(r, coord[j][2])+2)<1.4){
                 check = true;
                 for (int k=0; k<3; k++){
-                    coord[j][k] = (intersection[i][k]/20+coord[j][k]*19/20);
+                    coord[j][k] = (intersection[i][k]/5+coord[j][k]*4/5);
                 }
                 if (ind_of_ind[j][n]<=n-2){
                     ind_of_ind[j][ind_of_ind[j][n]]=indices[i][0];
@@ -80,7 +80,7 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>>  sort_
                 x = stat[i][0];
                 y = stat[i][1];
                 r = stat[i][2];
-                if (std::sqrt(std::pow(x-sort[now][0], 2)+std::pow(y-sort[now][1], 2))<(r+sort[now][2])/4*0.8f+2.0f){
+                if (std::sqrt(std::pow(x-sort[now][0], 2)+std::pow(y-sort[now][1], 2))<(r+sort[now][2])/5*0.8f+2.0f){
                     place[i]=now;
                     for (int k=0; k<3; k++){
                         sort[now][k] = (stat[i][k]*stat[i][3]+sort[now][k]*sort[now][3])/(stat[i][3]+sort[now][3]);

@@ -9,7 +9,7 @@
 
 static bool check(int xi, int yi, float gradx, float grady, float x, float y){
     if ((((gradx>0) && x<xi) || ((gradx<0) &&  x>xi)) && (((grady>0) && y<yi) || ((grady<0) && y>yi)) &&
-        std::sqrt((x-float(xi))*(x-float(xi))+(y-float(yi))*(y-float(yi)))<130.0f){
+        std::sqrt((x-float(xi))*(x-float(xi))+(y-float(yi))*(y-float(yi)))<150.0f){
         return true;
     } else {
         return false;
@@ -21,12 +21,12 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> cross_
     int l =1;
     float x, y, R1, R2, R;
 
-    std::vector<std::vector<float>> coord(10000000, std::vector<float>(3, 0.0f));
+    std::vector<std::vector<float>> coord(20000000, std::vector<float>(3, 0.0f));
     std::vector<std::vector<int>> indices(coord.size(),std::vector<int>(2, -1));
     int n = k.size(); int m = std::max(1, int(std::sqrt(n*n/2/coord.size())))+1;
 
 
-    for (int i=0; i < n; i+=m){
+    for (int i=0; i < n; i+=m/2){
         for (int j = i+1; j< n; j+=m-1){
             if (k[j]!=k[i]){
             x = (b[i]-b[j])/(k[j]-k[i]);
@@ -42,8 +42,9 @@ std::pair<std::vector<std::vector<float>>, std::vector<std::vector<int>>> cross_
 
 
             if (check(places[i][1], places[i][0], grad[i][1], grad[i][0], x, y) and 
-            check(places[j][1], places[j][0], grad[j][1], grad[j][0], x, y) and R1/(R2+5.0f)<1.25 and
-            std::abs(std::atan2(grad[j][1], grad[j][0])-std::atan2(grad[i][1], grad[i][0]))>3.1417*15.0/180){
+            check(places[j][1], places[j][0], grad[j][1], grad[j][0], x, y) and R1/(R2+3.0f)<1.3 and
+            std::abs(std::atan(grad[j][1]/grad[j][0])-std::atan(grad[i][1]/grad[i][0]))>3.1417*8.0/180 and
+            std::abs(std::atan(grad[j][1]/grad[j][0])-std::atan(grad[i][1]/grad[i][0]))<3.1417*(180-8.0)/180 and R2>5){
                 coord[l-1][0] = x;
                 coord[l-1][1] = y;
                 coord[l-1][2] = R;
